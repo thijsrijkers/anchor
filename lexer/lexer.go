@@ -6,21 +6,23 @@ import(
 
 type Lexer struct {
     input string
+    inputLength int
     position int
 }
 
 func NewLexer(input string) *Lexer {
-    return &Lexer{input:input}
+    return &Lexer{input:input, inputLength:len(input)}
 }
 
 func (l *Lexer) NextToken() Token {
+
     // Skipping over whitespace
-    for l.position < len(l.input) && l.input[l.position] == ' ' {
+    for l.position < l.lengthInput && l.input[l.position] == ' ' {
         l.position++
     }
 
     // Set end of file
-    if l.position >= len(l.input) {
+    if l.position >= l.lengthInput {
         return Token{Type: ENDOFFILE, Value: ""}
     }
 
@@ -30,7 +32,7 @@ func (l *Lexer) NextToken() Token {
         l.position++
         return Token{Type: NUMBER, Value: string(character)}
     }
-
+    
     switch string(character) {
         case "+":
 	    l.position++
@@ -38,9 +40,41 @@ func (l *Lexer) NextToken() Token {
         case "-":
 	    l.position++
 	    return Token{Type:MINUS, Value: string(character)}
+        case "=":
+	    l.position++
+	    return Token{Type:ASSIGN, Value: string(character)}
     }
 
+    if unicode.IsLetter(rune(character)) {
+        keyword := ""
+        for l.position <= l.lengthInput {
+	    if l.input[l.position] == ' ' {
+	         l.position++
+		 break
+	    }
+	    keyword += string(l.input[l.position])
+	    l.position++
+	}
+	
+	if keyword == "const" {
+            keywordValue := ""
+            for l.position <= l.lengthInput {
+	        if l.input[l.position] == ' ' {
+	            l.position++
+		    return Token{Type: IDENTIFER, Value: keywordValue}
+	        }
+	        keywordValue += string(l.input[l.position])
+	        l.position++
+	    }
+	}
+	
+	return Token{Type: ILLEGAL, Value: keyword}
+    }
 
     l.position++
+
+    if l.position >= l.lengthInput {
+        return Token{Type: ENDOFFILE, Value: ""}
+    }
     return Token{Type: ILLEGAL, Value: string(character)}
 }

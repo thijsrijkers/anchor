@@ -11,6 +11,7 @@ const (
 
     PLUS TokenType = "PLUS"
     MINUS TokenType = "MINUS"
+    ASSIGN TokenType = "ASSIGN"
 )
 
 type Token struct {
