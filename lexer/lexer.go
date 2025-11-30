@@ -17,12 +17,12 @@ func NewLexer(input string) *Lexer {
 func (l *Lexer) NextToken() Token {
 
     // Skipping over whitespace
-    for l.position < l.lengthInput && l.input[l.position] == ' ' {
+    for l.position < l.inputLength && l.input[l.position] == ' ' {
         l.position++
     }
 
     // Set end of file
-    if l.position >= l.lengthInput {
+    if l.position >= l.inputLength {
         return Token{Type: ENDOFFILE, Value: ""}
     }
 
@@ -47,7 +47,7 @@ func (l *Lexer) NextToken() Token {
 
     if unicode.IsLetter(rune(character)) {
         keyword := ""
-        for l.position <= l.lengthInput {
+        for l.position <= l.inputLength {
 	    if l.input[l.position] == ' ' {
 	         l.position++
 		 break
@@ -58,7 +58,7 @@ func (l *Lexer) NextToken() Token {
 	
 	if keyword == "const" {
             keywordValue := ""
-            for l.position <= l.lengthInput {
+            for l.position <= l.inputLength {
 	        if l.input[l.position] == ' ' {
 	            l.position++
 		    return Token{Type: IDENTIFER, Value: keywordValue}
@@ -71,10 +71,11 @@ func (l *Lexer) NextToken() Token {
 	return Token{Type: ILLEGAL, Value: keyword}
     }
 
-    l.position++
-
-    if l.position >= l.lengthInput {
+    if l.position >= l.inputLength {
         return Token{Type: ENDOFFILE, Value: ""}
     }
+
+    l.position++
+
     return Token{Type: ILLEGAL, Value: string(character)}
 }
