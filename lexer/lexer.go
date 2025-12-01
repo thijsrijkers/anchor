@@ -43,6 +43,9 @@ func (l *Lexer) NextToken() Token {
         case "=":
 	    l.position++
 	    return Token{Type:ASSIGN, Value: string(character)}
+	case ";":
+	    l.position++
+	    return Token{Type:CLOSING, Value: string(character)}
     }
 
     if unicode.IsLetter(rune(character)) {
