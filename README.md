@@ -15,7 +15,7 @@ Anchor bridges the gap between scripting and systems programming by providing a 
 
 ## Implementation
 
-Anchor is implemented in Go and processes `.anchor` source files. The compiler reads ZLang code, parses it, and emits raw machine instructions targeting the (currently) ARM architecture. The output is a standalone executable file that can be run directly on Linux systems.
+Anchor is implemented in Go and processes `.anchor` source files. The compiler reads source code, parses it, and emits assembly instructions targeting the (currently) ARM architecture. The output is a standalone executable file that can be run directly on Linux systems.
 
 ## Features
 
