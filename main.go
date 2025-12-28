@@ -10,11 +10,14 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	amountOfArguments := len(os.Args)
+	if amountOfArguments < 2 {
 		log.Fatal("Missing argument for file path")
 	}
 
 	inputPath := os.Args[1]
+	debug := amountOfArguments >= 3 && os.Args[2] == "--debug"
+
 	content, err := fileloader.Load(inputPath)
 
 	if err != nil {
@@ -25,10 +28,15 @@ func main() {
 	l := lexer.NewLexer(string(content))
 	for token := l.NextToken(); token.Type != lexer.ENDOFFILE; token = l.NextToken() {
 		tokens = append(tokens, token)
-		fmt.Printf("%+v\n", token)
+		if debug {
+			fmt.Printf("%+v\n", token)
+		}
 	}
 
 	p := parser.NewParser(tokens)
 	parsedContent := p.ParseProgram()
-	parser.PrettyPrintTree(parsedContent)
+
+	if debug {
+		parser.PrettyPrintTree(parsedContent)
+	}
 }

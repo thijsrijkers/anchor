@@ -23,3 +23,9 @@ Anchor is implemented in Go and processes `.anchor` source files. The compiler r
 - Direct system call access (e.g., write, exit)
 - Minimal and predictable execution model
 - Executable output without linking or intermediate formats
+
+
+## Getting Started
+
+### Debugging
+To see what has been calculated from an `.anchor` file, you can add the `--debug` flag to get the calculated values.
