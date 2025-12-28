@@ -2,8 +2,10 @@ package main
 
 import (
 	"anchor/fileloader"
+	"anchor/generator"
 	"anchor/lexer"
 	"anchor/parser"
+	"anchor/runner"
 	"fmt"
 	"log"
 	"os"
@@ -16,8 +18,17 @@ func main() {
 	}
 
 	inputPath := os.Args[1]
-	debug := amountOfArguments >= 3 && os.Args[2] == "--debug"
+	debug := false
+	execute := false
 
+	for _, arg := range os.Args[2:] {
+		switch arg {
+		case "--debug":
+			debug = true
+		case "--execute":
+			execute = true
+		}
+	}
 	content, err := fileloader.Load(inputPath)
 
 	if err != nil {
@@ -34,9 +45,16 @@ func main() {
 	}
 
 	p := parser.NewParser(tokens)
-	parsedContent := p.ParseProgram()
+	program := p.ParseProgram()
 
 	if debug {
-		parser.PrettyPrintTree(parsedContent)
+		parser.PrettyPrintTree(program)
+	}
+
+	g := generator.NewAssemblyGenerator()
+	g.GenerateProgram(program)
+
+	if execute {
+		runner.AssembleAndRun(debug)
 	}
 }
