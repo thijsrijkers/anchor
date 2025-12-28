@@ -1,62 +1,55 @@
 package parser
 
-import(
-    "anchor/lexer"
+import (
+	"anchor/lexer"
 )
 
-type OperationType string
-
-const(
-    ASSIGNMENT OperationType = "ASSIGMENT"
-    ADDITION OperationType = "ADDITION"
-    SUBSTRACTION OperationType = "SUBSTRACTION"
-)
-
-type Node Interface{}
-
-type Expression interface{
-    Node
+type Parser struct {
+	tokens []lexer.Token
+	pos    int
 }
 
-type TreeNode struct {
-    operation OperationType
-    left *Expression
-    right *Expression
-    rightOperation: bool
+func NewParser(tokens []lexer.Token) *Parser {
+	return &Parser{tokens: tokens}
 }
 
-func ParseTokens(tokens []Token) []TreeNode {
-    var treeNodes []TreeNode
-    var currentTreeNodes []TreeNode
-
-    position := 0
-    tokensLength := len(tokens)
-
-    for position < tokensLength {
-        if token.Type == "INDETIFER" {
-	    hasRightOperation := tokesn[i+2] != TokenType.CLOSING
-
-	    if !hasRightOperation {
-	        rightOperation := tokens[i+1].Value
-	        position += 2
-	    } else {
-	        rightOperation := nil
-	    }
-
-	    currentTreeNodes = appends(&TreeNode{
-	        operation: ASSIGNMENT
-		left: token.Value
-	        right: rightOperation
-		rightOperation: hasRightOperation
-	    })
-	    
-	    if !hasRightOperation {
-	        treeNodes := append(treeNodes, currentTreeNodes...)
-                currentTreeNodes = []TreeNode
-	    }
+func (parser *Parser) currentToken() lexer.Token {
+	if parser.pos >= len(parser.tokens) {
+		return lexer.Token{Type: lexer.ENDOFFILE}
 	}
-	
-	position++
-    }
-    return treeNodes
+	return parser.tokens[parser.pos]
+}
+
+func (parser *Parser) nextToken() {
+	parser.pos++
+}
+
+func (p *Parser) parseStatement() Statement {
+	token := p.currentToken()
+
+	switch token.Type {
+	case lexer.IDENTIFER:
+		return p.parseAssignment()
+	default:
+		p.nextToken()
+		return nil
+	}
+}
+
+func (parser *Parser) ParseProgram() *Program {
+	program := &Program{}
+
+	for parser.currentToken().Type != lexer.ENDOFFILE {
+		if parser.currentToken().Type == lexer.ILLEGAL {
+			parser.nextToken()
+			continue
+		}
+
+		stmt := parser.parseStatement()
+		if stmt != nil {
+			program.Statements = append(program.Statements, stmt)
+		}
+	}
+
+	return program
 }

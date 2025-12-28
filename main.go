@@ -1,27 +1,34 @@
 package main
 
-import(
-    "log"
-    "os"
-    "fmt"
-    "anchor/fileloader"
-    "anchor/lexer"
+import (
+	"anchor/fileloader"
+	"anchor/lexer"
+	"anchor/parser"
+	"fmt"
+	"log"
+	"os"
 )
 
 func main() {
-    if len(os.Args) < 2 {
-        log.Fatal("Missing argument for file path")
-    }
+	if len(os.Args) < 2 {
+		log.Fatal("Missing argument for file path")
+	}
 
-    inputPath := os.Args[1]
-    content, err := fileloader.Load(inputPath)
+	inputPath := os.Args[1]
+	content, err := fileloader.Load(inputPath)
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    l := lexer.NewLexer(string(content))
-    for token := l.NextToken(); token.Type != lexer.ENDOFFILE; token = l.NextToken() {
-        fmt.Printf("%+v\n", token)
-    }
+	var tokens []lexer.Token
+	l := lexer.NewLexer(string(content))
+	for token := l.NextToken(); token.Type != lexer.ENDOFFILE; token = l.NextToken() {
+		tokens = append(tokens, token)
+		fmt.Printf("%+v\n", token)
+	}
+
+	p := parser.NewParser(tokens)
+	parsedContent := p.ParseProgram()
+	parser.PrettyPrintTree(parsedContent)
 }
