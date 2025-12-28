@@ -15,7 +15,7 @@ func (gen *AssemblyGenerator) generateAssignmentToFile(a *parser.AssignmentState
 		gen.offsets[a.Name.Value] = offset
 	}
 
-	writeLine(fmt.Sprintf("str x0, [fp,#-%d]  # %s = ...", offset, a.Name.Value))
+	writeLine(fmt.Sprintf("str x0, [fp,#-%d]", offset))
 
 	writeLine("")
 }
